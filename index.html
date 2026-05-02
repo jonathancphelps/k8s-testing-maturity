@@ -322,9 +322,9 @@ h3{font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;line-height:1.
 
       <!-- Form success state -->
       <div id="form-success" class="form-state-block form-state-success" style="display:none">
-        <h3>On its way.</h3>
-        <p style="color:var(--muted)">Check your inbox in a few minutes. If you don't see it, check spam (and add me to your contacts).</p>
-        <p style="color:var(--muted2);font-size:14px;margin-top:18px">Want to skip the email and chat directly? <a href="https://www.linkedin.com/in/jonathanphelps/" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">DM me on LinkedIn →</a></p>
+        <h3>Got it.</h3>
+        <p style="color:var(--muted)">I'll personally email your report within 24 hours from <strong style="color:var(--white)">jon@testkube.io</strong>. Watch your inbox (and check spam if you don't see it, then add me to your contacts).</p>
+        <p style="color:var(--muted2);font-size:14px;margin-top:18px">Want to skip the wait and chat now? <a href="https://www.linkedin.com/in/jonathanphelps/" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">DM me on LinkedIn →</a></p>
       </div>
 
       <!-- Form error state -->
@@ -776,7 +776,7 @@ function renderCTAByLevel(level, score){
     // Update H3 + pitch
     var nextLevel = level + 1;
     document.getElementById('cta-h3').textContent = 'Want the full PDF report?';
-    document.getElementById('next-step-text').textContent = 'Your level breakdown, the dollar math, and a sequenced 90-day roadmap to L' + nextLevel + '. Sent to your inbox.';
+    document.getElementById('next-step-text').textContent = 'Your level breakdown, the dollar math, and a sequenced 90-day roadmap to L' + nextLevel + '. I\'ll personally email it to you within 24 hours.';
   } else {
     // Hide form, show CTAs
     form.style.display = 'none';
