@@ -11,7 +11,7 @@
 <!-- PostHog analytics -->
 <script>
 !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-posthog.init('phc_vPK8vfEAmmohBCFn8gP5tMGQQqwtXgqg6SkUxjdEJEh9', {api_host: 'https://us.i.posthog.com', defaults: '2025-05-24', person_profiles: 'identified_only'});
+posthog.init('__POSTHOG_KEY__', {api_host: 'https://us.i.posthog.com', defaults: '2025-05-24', person_profiles: 'identified_only'});
 </script>
 <style>
 :root{
@@ -189,6 +189,11 @@ h3{font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;line-height:1.
       <span><span class="dot"></span>No email required</span>
     </div>
 
+    <div class="intro-cta" style="margin-top:32px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="trackCTA('start_top');goTo('q1')">Start the assessment →</button>
+      <span style="color:var(--muted2);font-size:13px">or keep scrolling to see the 5 levels first</span>
+    </div>
+
     <div class="levels-grid">
       <div class="level-row"><span class="level-tag level-1">L1</span><span class="level-name">Reactive</span><span class="level-desc">Tests run wherever they happen to run. CI does everything. Failures get triaged after the page goes off.</span></div>
       <div class="level-row"><span class="level-tag level-2">L2</span><span class="level-name">CI-Bound</span><span class="level-desc">Standardized test suites in CI. Tests still run outside the cluster with privileged credentials.</span></div>
@@ -198,7 +203,7 @@ h3{font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;line-height:1.
     </div>
 
     <div style="margin-top:36px">
-      <button class="btn btn-primary" onclick="goTo('q1')">Start the assessment →</button>
+      <button class="btn btn-primary" onclick="trackCTA('start_bottom');goTo('q1')">Start the assessment →</button>
     </div>
   </section>
 
