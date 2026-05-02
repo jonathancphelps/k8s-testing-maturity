@@ -311,18 +311,9 @@ h3{font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;line-height:1.
           <label for="form-email">Work email</label>
           <input type="email" name="email" id="form-email" required placeholder="you@company.com" autocomplete="email">
         </div>
-        <div class="form-row form-row-grid">
-          <div>
-            <label for="form-name">Name <span class="opt">(optional)</span></label>
-            <input type="text" name="name" id="form-name" placeholder="First Last" autocomplete="name">
-          </div>
-          <div>
-            <label for="form-company">Company <span class="opt">(optional)</span></label>
-            <input type="text" name="company" id="form-company" placeholder="Acme Corp" autocomplete="organization">
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary" id="form-submit-btn">Send the report →</button>
+        <button type="submit" class="btn btn-primary" id="form-submit-btn">Send my report →</button>
         <p class="form-fine">Free. I read every one and respond personally. No nurture, no pestering.</p>
+        <p class="form-fine" style="margin-top:14px;text-align:center;border-top:1px solid var(--line);padding-top:18px">Already know you want to talk? <a href="https://meetings.hubspot.com/testkube-jon/testing-strategy" target="_blank" rel="noopener" onclick="trackCTA('book_meeting_inline')" style="color:var(--accent);text-decoration:none;font-weight:600">Book a 30-min session →</a></p>
       </form>
 
       <!-- Form success state -->
@@ -821,17 +812,13 @@ document.addEventListener('DOMContentLoaded', function(){
       form.style.display = 'none';
       document.getElementById('form-success').style.display = 'block';
       var email = formData.get('email');
-      var name = formData.get('name');
-      var company = formData.get('company');
       var level = window._lastResult ? window._lastResult.level : null;
       var score = window._lastResult ? window._lastResult.score : null;
-      trackEvent('lead_form_submitted', {level: level, score: score, has_name: !!name, has_company: !!company});
+      trackEvent('lead_form_submitted', {level: level, score: score});
       // Identify the user in PostHog so subsequent events tie to the email
       if(window.posthog && typeof window.posthog.identify === 'function' && email){
         window.posthog.identify(email, {
           email: email,
-          name: name || undefined,
-          company: company || undefined,
           assessment_level: level,
           assessment_score: score
         });
