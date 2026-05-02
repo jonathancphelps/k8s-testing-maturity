@@ -149,6 +149,22 @@ h3{font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;line-height:1.
 @media(max-width:640px){.level-row{flex-wrap:wrap}.level-name{width:auto}.level-desc{width:100%;font-size:13px}}
 
 .future-tag{display:inline-block;background:rgba(255,219,91,0.15);color:var(--accent);font-family:'Nunito',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;padding:3px 8px;border-radius:4px;margin-left:6px;vertical-align:middle}
+
+/* Lead form */
+.form-row{margin-bottom:16px}
+.form-row label{display:block;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:var(--muted);margin-bottom:6px;letter-spacing:0.3px}
+.form-row label .opt{color:var(--muted2);font-weight:400;font-size:12px}
+.form-row input{font-family:'Nunito Sans',sans-serif;font-size:15px;background:var(--card);border:1px solid var(--line);color:var(--white);padding:12px 14px;border-radius:8px;width:100%;box-sizing:border-box}
+.form-row input:focus{outline:none;border-color:var(--accent);background:var(--card-hover)}
+.form-row input::placeholder{color:var(--muted2)}
+.form-row-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+@media(max-width:540px){.form-row-grid{grid-template-columns:1fr}}
+#lead-form .btn-primary{width:100%;justify-content:center;margin-top:8px;font-size:16px;padding:16px}
+#lead-form .btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none}
+.form-fine{color:var(--muted2);font-size:13px;text-align:center;margin-top:14px;line-height:1.5}
+.form-state-success h3{color:var(--good);margin-bottom:8px}
+.form-state-error h3{color:var(--bad);margin-bottom:8px}
+.form-state-block{padding:8px 0}
 </style>
 </head>
 <body>
@@ -278,13 +294,51 @@ h3{font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;line-height:1.
     </div>
 
     <div class="result-card">
-      <h3>What's next</h3>
-      <p style="color:var(--muted);font-size:15px;margin-top:8px;margin-bottom:18px" id="next-step-text"></p>
-      <div class="cta-row">
+      <h3 id="cta-h3">What's next</h3>
+      <p style="color:var(--muted);font-size:15px;margin-top:8px;margin-bottom:24px" id="next-step-text"></p>
+
+      <!-- Lead form (rendered for L1-L3) -->
+      <form id="lead-form" action="https://formspree.io/f/mrejezap" method="POST" style="display:none">
+        <input type="hidden" name="_subject" id="form-subject" value="K8s Testing Maturity Assessment - new lead">
+        <input type="hidden" name="level" id="form-level">
+        <input type="hidden" name="score" id="form-score">
+        <div class="form-row">
+          <label for="form-email">Work email</label>
+          <input type="email" name="email" id="form-email" required placeholder="you@company.com" autocomplete="email">
+        </div>
+        <div class="form-row form-row-grid">
+          <div>
+            <label for="form-name">Name <span class="opt">(optional)</span></label>
+            <input type="text" name="name" id="form-name" placeholder="First Last" autocomplete="name">
+          </div>
+          <div>
+            <label for="form-company">Company <span class="opt">(optional)</span></label>
+            <input type="text" name="company" id="form-company" placeholder="Acme Corp" autocomplete="organization">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="form-submit-btn">Send the report →</button>
+        <p class="form-fine">Free. I read every one and respond personally. No nurture, no pestering.</p>
+      </form>
+
+      <!-- Form success state -->
+      <div id="form-success" class="form-state-block form-state-success" style="display:none">
+        <h3>On its way.</h3>
+        <p style="color:var(--muted)">Check your inbox in a few minutes. If you don't see it, check spam (and add me to your contacts).</p>
+        <p style="color:var(--muted2);font-size:14px;margin-top:18px">Want to skip the email and chat directly? <a href="https://www.linkedin.com/in/jonathanphelps/" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">DM me on LinkedIn →</a></p>
+      </div>
+
+      <!-- Form error state -->
+      <div id="form-error" class="form-state-block form-state-error" style="display:none">
+        <h3>Submission didn't go through.</h3>
+        <p style="color:var(--muted)">Easiest fix: <a href="https://www.linkedin.com/in/jonathanphelps/" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">DM me on LinkedIn</a> and I'll send the report directly.</p>
+      </div>
+
+      <!-- Existing CTAs (rendered for L4-L5) -->
+      <div class="cta-row" id="cta-row-original" style="display:none">
         <a class="btn btn-primary" id="dm-cta" href="https://www.linkedin.com/in/jonathanphelps/" target="_blank" rel="noopener" onclick="trackCTA('dm_linkedin')">DM me on LinkedIn →</a>
         <a class="btn btn-secondary" id="email-cta" href="#" onclick="return openEmail(event)">Email me the full report</a>
       </div>
-      <p style="color:var(--muted2);font-size:13px;margin-top:18px;text-align:center">I'll send back: a one-page diagnostic, the dollar-math worksheet, and a 30-min walkthrough offer if you want it. No follow-up sequences, no nurture, no pestering.</p>
+      <p id="cta-fine-text" style="color:var(--muted2);font-size:13px;margin-top:18px;text-align:center;display:none">I'll send back: a one-page diagnostic, the dollar-math worksheet, and a 30-min walkthrough offer if you want it. No follow-up sequences, no nurture, no pestering.</p>
     </div>
 
     <button class="btn-ghost" onclick="restart()" style="display:block;margin:32px auto 0">↻ Take the assessment again</button>
@@ -695,6 +749,95 @@ computeAndShow = function(){
   window._lastResult = { score: totalScore, level: level };
   _origCompute();
 };
+
+
+// ============ Lead form: conditional rendering + submission ============
+function renderCTAByLevel(level, score){
+  var isL1to3 = level <= 3;
+  var form = document.getElementById('lead-form');
+  var ctaRow = document.getElementById('cta-row-original');
+  var ctaFine = document.getElementById('cta-fine-text');
+  var formSuccess = document.getElementById('form-success');
+  var formError = document.getElementById('form-error');
+
+  // Reset state
+  if(formSuccess) formSuccess.style.display = 'none';
+  if(formError) formError.style.display = 'none';
+
+  if(isL1to3){
+    // Show form, hide CTAs
+    form.style.display = 'block';
+    if(ctaRow) ctaRow.style.display = 'none';
+    if(ctaFine) ctaFine.style.display = 'none';
+    // Populate hidden fields
+    document.getElementById('form-level').value = level;
+    document.getElementById('form-score').value = score;
+    document.getElementById('form-subject').value = 'K8s Testing Maturity Assessment - L' + level + ' lead (score ' + score + '/50)';
+    // Update H3 + pitch
+    var nextLevel = level + 1;
+    document.getElementById('cta-h3').textContent = 'Want the full PDF report?';
+    document.getElementById('next-step-text').textContent = 'Your level breakdown, the dollar math, and a sequenced 90-day roadmap to L' + nextLevel + '. Sent to your inbox.';
+  } else {
+    // Hide form, show CTAs
+    form.style.display = 'none';
+    if(ctaRow) ctaRow.style.display = 'flex';
+    if(ctaFine) ctaFine.style.display = 'block';
+    document.getElementById('cta-h3').textContent = 'What\'s next';
+    // next-step-text is already set by renderResult based on level
+  }
+}
+
+// Wrap renderResult to call renderCTAByLevel
+var _origRenderResult = renderResult;
+renderResult = function(r){
+  _origRenderResult(r);
+  renderCTAByLevel(r.level, r.score);
+};
+
+// Form submit handler
+document.addEventListener('DOMContentLoaded', function(){
+  var form = document.getElementById('lead-form');
+  if(!form) return;
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = document.getElementById('form-submit-btn');
+    var formData = new FormData(form);
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    fetch(form.action, {
+      method: 'POST',
+      body: formData,
+      headers: {'Accept': 'application/json'}
+    }).then(function(response){
+      if(!response.ok) throw new Error('HTTP ' + response.status);
+      // Success
+      form.style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+      var email = formData.get('email');
+      var name = formData.get('name');
+      var company = formData.get('company');
+      var level = window._lastResult ? window._lastResult.level : null;
+      var score = window._lastResult ? window._lastResult.score : null;
+      trackEvent('lead_form_submitted', {level: level, score: score, has_name: !!name, has_company: !!company});
+      // Identify the user in PostHog so subsequent events tie to the email
+      if(window.posthog && typeof window.posthog.identify === 'function' && email){
+        window.posthog.identify(email, {
+          email: email,
+          name: name || undefined,
+          company: company || undefined,
+          assessment_level: level,
+          assessment_score: score
+        });
+      }
+    }).catch(function(err){
+      form.style.display = 'none';
+      document.getElementById('form-error').style.display = 'block';
+      trackEvent('lead_form_error', {error: String(err && err.message ? err.message : err)});
+    });
+  });
+});
+
 
 // On load
 goTo('landing');
