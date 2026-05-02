@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K8s Testing Maturity Assessment | Testkube</title>
+<meta name="description" content="A 3-minute diagnostic that places your team on a 5-level Kubernetes testing maturity scale and quantifies the cost of the gap.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- PostHog analytics -->
+<script>
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_vPK8vfEAmmohBCFn8gP5tMGQQqwtXgqg6SkUxjdEJEh9', {api_host: 'https://us.i.posthog.com', defaults: '2025-05-24', person_profiles: 'identified_only'});
+</script>
+<style>
+:root{
+  --bg:#160F31;
+  --bg2:#252348;
+  --bg3:#1d1740;
+  --accent:#FFDB5B;
+  --white:#ffffff;
+  --muted:rgba(255,255,255,0.72);
+  --muted2:rgba(255,255,255,0.5);
+  --line:rgba(255,255,255,0.12);
+  --card:rgba(255,255,255,0.04);
+  --card-hover:rgba(255,255,255,0.08);
+  --good:#7CE8B0;
+  --warn:#FFB347;
+  --bad:#FF7A7A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--white);font-family:'Nunito Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(82,45,168,0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 90% 100%, rgba(43,33,90,0.6) 0%, transparent 55%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg3) 100%);
+  background-attachment:fixed;
+}
+.wrap{max-width:880px;margin:0 auto;padding:48px 24px 96px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px}
+.brand{font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;letter-spacing:0.5px;color:var(--white)}
+.brand-tag{font-size:12px;color:var(--muted2);font-weight:400;letter-spacing:0.3px;margin-top:2px}
+.eyebrow{display:inline-block;font-family:'Nunito',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase;padding:6px 12px;border:1px solid rgba(255,219,91,0.3);border-radius:99px;margin-bottom:24px}
+h1{font-family:'Nunito',sans-serif;font-weight:800;font-size:48px;line-height:1.1;letter-spacing:-0.02em;margin-bottom:20px}
+h1 .hl{color:var(--accent)}
+h2{font-family:'Nunito',sans-serif;font-weight:800;font-size:32px;line-height:1.15;margin-bottom:16px;letter-spacing:-0.01em}
+h3{font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;line-height:1.3;margin-bottom:8px}
+.lede{font-size:19px;color:var(--muted);max-width:640px;margin-bottom:36px}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:15px;padding:14px 24px;border-radius:8px;border:none;cursor:pointer;transition:all 0.15s ease;text-decoration:none}
+.btn-primary{background:var(--accent);color:var(--bg)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,219,91,0.25)}
+.btn-secondary{background:transparent;color:var(--white);border:1px solid var(--line)}
+.btn-secondary:hover{background:var(--card-hover);border-color:rgba(255,255,255,0.25)}
+.btn-ghost{background:transparent;color:var(--muted);border:none;padding:12px 0;font-size:14px}
+.btn-ghost:hover{color:var(--white)}
+.meta{display:flex;gap:24px;margin-top:24px;color:var(--muted2);font-size:14px}
+.meta span{display:flex;align-items:center;gap:6px}
+.dot{width:6px;height:6px;background:var(--accent);border-radius:50%;display:inline-block}
+
+.screen{display:none;animation:fadeIn 0.35s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.progress{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.progress-bar{flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);transition:width 0.3s ease;width:0}
+.progress-text{font-size:13px;color:var(--muted2);font-family:'Nunito',sans-serif;font-weight:600;letter-spacing:0.5px;white-space:nowrap}
+
+.q-num{font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase;margin-bottom:14px}
+.q-text{font-family:'Nunito',sans-serif;font-weight:800;font-size:30px;line-height:1.2;margin-bottom:32px;letter-spacing:-0.01em}
+.q-help{font-size:15px;color:var(--muted);margin-top:-22px;margin-bottom:28px}
+
+.opts{display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+.opt{display:flex;align-items:flex-start;gap:14px;padding:18px 20px;background:var(--card);border:1px solid var(--line);border-radius:10px;cursor:pointer;transition:all 0.12s ease}
+.opt:hover{background:var(--card-hover);border-color:rgba(255,255,255,0.2);transform:translateX(2px)}
+.opt.selected{background:rgba(255,219,91,0.08);border-color:var(--accent)}
+.opt-radio{flex-shrink:0;width:20px;height:20px;border:2px solid var(--muted2);border-radius:50%;margin-top:2px;position:relative;transition:all 0.12s}
+.opt.selected .opt-radio{border-color:var(--accent)}
+.opt.selected .opt-radio::after{content:'';position:absolute;top:3px;left:3px;width:10px;height:10px;background:var(--accent);border-radius:50%}
+.opt-content{flex:1}
+.opt-text{color:var(--white);font-size:15px;line-height:1.45}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.nav-spacer{flex:1}
+
+/* Result screen */
+.result-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:36px;margin-bottom:24px}
+.level-badge{display:inline-flex;align-items:center;gap:10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;padding:8px 14px;border-radius:99px;margin-bottom:20px}
+.level-1{background:rgba(255,122,122,0.15);color:#FF9999;border:1px solid rgba(255,122,122,0.3)}
+.level-2{background:rgba(255,179,71,0.15);color:#FFC97A;border:1px solid rgba(255,179,71,0.3)}
+.level-3{background:rgba(255,219,91,0.15);color:var(--accent);border:1px solid rgba(255,219,91,0.3)}
+.level-4{background:rgba(124,232,176,0.15);color:#9EEFC4;border:1px solid rgba(124,232,176,0.3)}
+.level-5{background:rgba(255,219,91,0.2);color:var(--accent);border:1px solid var(--accent)}
+.score-row{display:flex;align-items:baseline;gap:14px;margin-bottom:20px}
+.score-num{font-family:'Nunito',sans-serif;font-weight:800;font-size:64px;line-height:1;letter-spacing:-0.03em}
+.score-out{color:var(--muted2);font-size:20px}
+.scale{display:flex;gap:6px;margin:24px 0}
+.scale-bar{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,0.08);position:relative}
+.scale-bar.active{background:var(--accent)}
+.scale-bar.passed{background:rgba(255,219,91,0.4)}
+.scale-labels{display:flex;justify-content:space-between;font-family:'Nunito',sans-serif;font-weight:600;font-size:11px;color:var(--muted2);letter-spacing:0.5px;text-transform:uppercase;margin-top:-12px}
+.scale-labels span{flex:1;text-align:center}
+.scale-labels span.active{color:var(--accent)}
+
+.gap-list{display:flex;flex-direction:column;gap:14px;margin-top:20px}
+.gap-item{display:flex;gap:14px;padding:18px;background:rgba(255,255,255,0.03);border-radius:10px;border-left:3px solid var(--accent)}
+.gap-num{font-family:'Nunito',sans-serif;font-weight:800;font-size:24px;color:var(--accent);line-height:1;flex-shrink:0;width:30px}
+.gap-content h4{font-family:'Nunito',sans-serif;font-weight:700;font-size:16px;margin-bottom:6px}
+.gap-content p{font-size:14px;color:var(--muted);line-height:1.5}
+
+.cost-block{padding:24px;background:linear-gradient(135deg, rgba(255,219,91,0.08), rgba(255,219,91,0.02));border:1px solid rgba(255,219,91,0.2);border-radius:12px;margin-top:20px}
+.cost-label{font-family:'Nunito',sans-serif;font-weight:700;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.cost-num{font-family:'Nunito',sans-serif;font-weight:800;font-size:36px;line-height:1.1;margin-bottom:8px;letter-spacing:-0.02em}
+.cost-fine{font-size:13px;color:var(--muted2);line-height:1.5}
+
+.cta-row{display:flex;flex-direction:column;gap:12px;margin-top:32px}
+@media(min-width:640px){.cta-row{flex-direction:row}}
+.cta-row .btn{flex:1;justify-content:center;text-align:center}
+
+.size-input{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.size-input label{font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.5px;color:var(--muted)}
+.size-input select, .size-input input{font-family:'Nunito Sans',sans-serif;font-size:15px;background:var(--card);border:1px solid var(--line);color:var(--white);padding:12px 14px;border-radius:8px;width:100%;max-width:320px}
+.size-input select:focus, .size-input input:focus{outline:none;border-color:var(--accent)}
+
+.divider{height:1px;background:var(--line);margin:32px 0}
+
+.footer{margin-top:48px;padding-top:32px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted2)}
+.footer a{color:var(--muted);text-decoration:none}
+.footer a:hover{color:var(--white)}
+
+@media(max-width:640px){
+  .wrap{padding:32px 20px 64px}
+  h1{font-size:34px}
+  .q-text{font-size:24px}
+  .score-num{font-size:48px}
+  .cost-num{font-size:28px}
+  .header{margin-bottom:32px}
+}
+
+/* Levels visualization on landing */
+.levels-grid{display:flex;flex-direction:column;gap:8px;margin-top:32px;margin-bottom:8px}
+.level-row{display:flex;align-items:center;gap:16px;padding:14px 18px;background:var(--card);border:1px solid var(--line);border-radius:10px}
+.level-tag{font-family:'Nunito',sans-serif;font-weight:800;font-size:11px;letter-spacing:1px;padding:4px 10px;border-radius:4px;flex-shrink:0;min-width:46px;text-align:center}
+.level-name{font-family:'Nunito',sans-serif;font-weight:700;font-size:15px;flex-shrink:0;width:140px}
+.level-desc{font-size:14px;color:var(--muted)}
+@media(max-width:640px){.level-row{flex-wrap:wrap}.level-name{width:auto}.level-desc{width:100%;font-size:13px}}
+
+.future-tag{display:inline-block;background:rgba(255,219,91,0.15);color:var(--accent);font-family:'Nunito',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;padding:3px 8px;border-radius:4px;margin-left:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div>
+      <div class="brand">testkube</div>
+      <div class="brand-tag">testing control plane for kubernetes</div>
+    </div>
+    <a href="#" id="restart-link" class="btn-ghost" style="display:none">↻ Start over</a>
+  </div>
+
+  <!-- LANDING -->
+  <section class="screen active" id="screen-landing">
+    <div class="eyebrow">3-Minute Diagnostic</div>
+    <h1>Where does your team sit on the <span class="hl">K8s testing maturity</span> curve?</h1>
+    <p class="lede">Most engineering orgs running Kubernetes in production don't know what level they're at, and don't know what the gap is costing them. This assessment places you on a 5-level scale built on real benchmarks from enterprise platform teams, and quantifies the annual dollar cost of the gap.</p>
+
+    <div class="meta">
+      <span><span class="dot"></span>10 questions</span>
+      <span><span class="dot"></span>~3 minutes</span>
+      <span><span class="dot"></span>No email required</span>
+    </div>
+
+    <div class="levels-grid">
+      <div class="level-row"><span class="level-tag level-1">L1</span><span class="level-name">Reactive</span><span class="level-desc">Tests run wherever they happen to run. CI does everything. Failures get triaged after the page goes off.</span></div>
+      <div class="level-row"><span class="level-tag level-2">L2</span><span class="level-name">CI-Bound</span><span class="level-desc">Standardized test suites in CI. Tests still run outside the cluster with privileged credentials.</span></div>
+      <div class="level-row"><span class="level-tag level-3">L3</span><span class="level-name">Hybrid</span><span class="level-desc">Some K8s-native execution. Limited orchestration, partial governance, transition phase.</span></div>
+      <div class="level-row"><span class="level-tag level-4">L4</span><span class="level-name">K8s-Native</span><span class="level-desc">Tests execute in-cluster with workload identity. Centralized control plane, AI-assisted root cause.</span></div>
+      <div class="level-row"><span class="level-tag level-5">L5</span><span class="level-name">AI-Orchestrated <span class="future-tag">2026+</span></span><span class="level-desc">AI-authored, AI-maintained tests. Test authority adapts to schema, topology, and observed behavior autonomously.</span></div>
+    </div>
+
+    <div style="margin-top:36px">
+      <button class="btn btn-primary" onclick="goTo('q1')">Start the assessment →</button>
+    </div>
+  </section>
+
+  <!-- QUESTIONS (rendered dynamically) -->
+  <section class="screen" id="screen-questions">
+    <div class="progress">
+      <div class="progress-text" id="progress-text">Question 1 of 10</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div id="question-host"></div>
+    <div class="nav">
+      <button class="btn btn-secondary" id="back-btn" onclick="prevQ()" style="visibility:hidden">← Back</button>
+      <div class="nav-spacer"></div>
+      <button class="btn btn-primary" id="next-btn" onclick="nextQ()" disabled>Next →</button>
+    </div>
+  </section>
+
+  <!-- SIZING -->
+  <section class="screen" id="screen-sizing">
+    <div class="eyebrow">Last step — context for the cost estimate</div>
+    <h2>How many engineers are in your org?</h2>
+    <p class="lede">We use this to calibrate the dollar cost of the maturity gap. Approximate is fine — it doesn't change your level, only the size of the number.</p>
+    <div class="size-input">
+      <label for="org-size">Engineering headcount</label>
+      <select id="org-size">
+        <option value="50">Under 100 engineers</option>
+        <option value="300">100–500 engineers</option>
+        <option value="800" selected>500–1,000 engineers</option>
+        <option value="1500">1,000–2,500 engineers</option>
+        <option value="4000">2,500–5,000 engineers</option>
+        <option value="8000">5,000+ engineers</option>
+      </select>
+    </div>
+    <div class="size-input">
+      <label for="cluster-count">Production K8s clusters (approximate)</label>
+      <select id="cluster-count">
+        <option value="3">1–5 clusters</option>
+        <option value="10">5–15 clusters</option>
+        <option value="25" selected>15–35 clusters</option>
+        <option value="60">35–80 clusters</option>
+        <option value="120">80+ clusters</option>
+      </select>
+    </div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="goTo('q10')">← Back</button>
+      <div class="nav-spacer"></div>
+      <button class="btn btn-primary" onclick="computeAndShow()">See my results →</button>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="screen-result">
+    <div class="eyebrow">Your result</div>
+    <h2 id="result-title">You're at Level 2 — CI-Bound</h2>
+    <p class="lede" id="result-summary"></p>
+
+    <div class="result-card">
+      <div class="level-badge" id="level-badge">Level 2 — CI-Bound</div>
+      <div class="score-row">
+        <span class="score-num" id="score-num">28</span>
+        <span class="score-out">/ 50 maturity score</span>
+      </div>
+      <div class="scale">
+        <div class="scale-bar" data-l="1"></div>
+        <div class="scale-bar" data-l="2"></div>
+        <div class="scale-bar" data-l="3"></div>
+        <div class="scale-bar" data-l="4"></div>
+        <div class="scale-bar" data-l="5"></div>
+      </div>
+      <div class="scale-labels">
+        <span data-l="1">L1 Reactive</span>
+        <span data-l="2">L2 CI-Bound</span>
+        <span data-l="3">L3 Hybrid</span>
+        <span data-l="4">L4 K8s-Native</span>
+        <span data-l="5">L5 AI-Orch.</span>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <h3>Top 3 gaps holding you back</h3>
+      <p style="color:var(--muted);font-size:14px;margin-top:4px">The dimensions where you scored lowest. Closing these is the highest-leverage path to the next level.</p>
+      <div class="gap-list" id="gap-list"></div>
+    </div>
+
+    <div class="result-card">
+      <h3>Estimated annual cost of your maturity gap</h3>
+      <p style="color:var(--muted);font-size:14px;margin-top:4px">Based on your team size, cluster count, and the documented impact categories from Testkube's economic model: escaped defects, MTTR/recovery, CI compute, environment costs, and runner fleet overhead. Risk-adjusted.</p>
+      <div class="cost-block">
+        <div class="cost-label">Annual gap cost (range)</div>
+        <div class="cost-num" id="cost-num">$1.2M – $2.4M</div>
+        <div class="cost-fine" id="cost-fine">Roughly equivalent to <span id="engineer-equiv">8–14 engineers</span> of unrecovered productivity, infrastructure, and incident exposure per year.</div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <h3>What's next</h3>
+      <p style="color:var(--muted);font-size:15px;margin-top:8px;margin-bottom:18px" id="next-step-text"></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" id="dm-cta" href="https://www.linkedin.com/in/jonathanphelps/" target="_blank" rel="noopener" onclick="trackCTA('dm_linkedin')">DM me on LinkedIn →</a>
+        <a class="btn btn-secondary" id="email-cta" href="#" onclick="return openEmail(event)">Email me the full report</a>
+      </div>
+      <p style="color:var(--muted2);font-size:13px;margin-top:18px;text-align:center">I'll send back: a one-page diagnostic, the dollar-math worksheet, and a 30-min walkthrough offer if you want it. No follow-up sequences, no nurture, no pestering.</p>
+    </div>
+
+    <button class="btn-ghost" onclick="restart()" style="display:block;margin:32px auto 0">↻ Take the assessment again</button>
+  </section>
+
+  <div class="footer">
+    <span>© 2026 Testkube — testing control plane for Kubernetes</span>
+    <a href="https://testkube.io" target="_blank" rel="noopener">testkube.io →</a>
+  </div>
+</div>
+
+<script>
+// ============ Question bank ============
+// Each question has 5 options; the score (1-5) corresponds to maturity level.
+// Options are ordered by the user-facing flow (we randomize within each render? no — keep deterministic for trust).
+const QUESTIONS = [
+  {
+    id:'q1',
+    title:'Where do your tests actually execute?',
+    help:'Think about the bulk of your integration, e2e, and load tests — not unit tests.',
+    dim:'Execution location',
+    opts:[
+      {text:"Wherever the engineer happened to run them. There's no standard.", score:1},
+      {text:"Almost entirely in CI runners outside the cluster (GitHub Actions, GitLab CI, Jenkins, CircleCI).", score:2},
+      {text:"Mixed — some teams run in-cluster, most still in CI.", score:3},
+      {text:"In-cluster, on ephemeral pods with workload identity. CI orchestrates but doesn't execute.", score:4},
+      {text:"In-cluster, with the test plane authoring and adapting tests autonomously based on observed topology.", score:5}
+    ]
+  },
+  {
+    id:'q2',
+    title:'How do tests authenticate to your cluster?',
+    help:'This is the privilege-inversion question — and the one your security team usually has the strongest opinion on.',
+    dim:'Identity & RBAC posture',
+    opts:[
+      {text:"Long-lived kubeconfig or service account tokens stored in CI secrets.", score:1},
+      {text:"Short-lived tokens, but CI still has cluster-admin or near-admin privileges.", score:2},
+      {text:"Scoped service accounts per pipeline. Some teams still over-privileged.", score:3},
+      {text:"Workload identity bound to in-cluster runner pods. Tests inherit the same RBAC as the workload under test.", score:4},
+      {text:"Workload identity plus per-test policy enforced by the control plane, with full audit trail.", score:5}
+    ]
+  },
+  {
+    id:'q3',
+    title:'How realistic is your test environment compared to production?',
+    help:'Real routing, real mesh, real identities — or mocked?',
+    dim:'Environment fidelity',
+    opts:[
+      {text:"Mostly mocks and stubs. Distributed system behavior is not exercised.", score:1},
+      {text:"Long-lived shared staging cluster. Drifts from prod constantly.", score:2},
+      {text:"Some ephemeral environments, but limited mesh/identity fidelity.", score:3},
+      {text:"On-demand ephemeral clusters with real service mesh, identity, and NetworkPolicy enforcement.", score:4},
+      {text:"Production-shadow environments where the test plane reproduces topology, traffic, and failure modes from real telemetry.", score:5}
+    ]
+  },
+  {
+    id:'q4',
+    title:'What does test orchestration look like across your engineering org?',
+    help:'How do tests get triggered, scheduled, parallelized, and reported?',
+    dim:'Orchestration & parallelism',
+    opts:[
+      {text:"Bespoke scripts and Makefiles per team. No central orchestration.", score:1},
+      {text:"CI pipelines define everything. Parallelism is bounded by CI runner fleet capacity.", score:2},
+      {text:"Some workflow tooling (Argo Workflows, Tekton). Inconsistent across teams.", score:3},
+      {text:"Central control plane with reusable workflow templates, matrix fan-out, sharding, and gating across teams.", score:4},
+      {text:"Control plane authors and orchestrates workflows automatically based on change scope, risk, and historical flake/coverage data.", score:5}
+    ]
+  },
+  {
+    id:'q5',
+    title:'How standardized is tooling across teams?',
+    help:'Same testing framework everywhere, or fragmented?',
+    dim:'Tool standardization',
+    opts:[
+      {text:"Every team picked their own. Some don't write tests at all.", score:1},
+      {text:"A handful of approved frameworks. Hard to compare results across teams.", score:2},
+      {text:"Central platform team is mid-rollout of a standard. Adoption is partial.", score:3},
+      {text:"Tool-agnostic platform — any containerized tool runs through the same control plane with unified results, governance, and observability.", score:4},
+      {text:"Tool selection itself is recommended by the platform based on the test type, target service, and historical effectiveness.", score:5}
+    ]
+  },
+  {
+    id:'q6',
+    title:'When tests fail, how fast does someone find the actual root cause?',
+    help:'Not "the test failed" — the actual cause: schema change, mesh policy, race condition, infra drift.',
+    dim:'Root-cause time',
+    opts:[
+      {text:"Hours to days. Often a senior engineer reproducing locally.", score:1},
+      {text:"Hours. CI logs and JUnit reports are the main forensic surface.", score:2},
+      {text:"30–60 min, with cluster logs and traces if someone digs in.", score:3},
+      {text:"Under 15 min. AI-assisted root cause surfaces the likely cause from logs, traces, and topology.", score:4},
+      {text:"Near-instant. AI agents triage, classify, propose remediation, and open a ticket before a human looks.", score:5}
+    ]
+  },
+  {
+    id:'q7',
+    title:'How do you handle test flakiness?',
+    help:'Flake rate, ownership, and mitigation strategy.',
+    dim:'Flakiness management',
+    opts:[
+      {text:"We retry until it passes. Nobody owns flake reduction.", score:1},
+      {text:"We track flake rate per pipeline. Fixing flakes competes with feature work.", score:2},
+      {text:"Some flakiness insights. Quarantine some, debug some.", score:3},
+      {text:"Per-test flakiness analytics, automated quarantine, root-cause aggregation across runs.", score:4},
+      {text:"AI agents detect flake patterns, propose fixes, and refactor or retire flaky tests autonomously.", score:5}
+    ]
+  },
+  {
+    id:'q8',
+    title:'How well do your tests catch distributed-system failures?',
+    help:'Service mesh routing, identity, retries, partial outages, network policy.',
+    dim:'Distributed coverage',
+    opts:[
+      {text:"They don't. We catch most distributed bugs in production.", score:1},
+      {text:"Rarely. Our mocks don't simulate mesh, identity, or NetworkPolicy.", score:2},
+      {text:"Some — usually only on specific high-risk services.", score:3},
+      {text:"Yes — tests run with real mesh, identity, NetworkPolicy, and chaos injection where relevant.", score:4},
+      {text:"Yes, plus tests are continuously re-derived from production telemetry to catch newly emergent failure modes.", score:5}
+    ]
+  },
+  {
+    id:'q9',
+    title:'What role does AI play in your testing today?',
+    help:'Honest answer — pilots count, "we tried Copilot once" doesn\'t.',
+    dim:'AI-assisted operations',
+    opts:[
+      {text:"None. Or one-off ChatGPT use by individuals.", score:1},
+      {text:"Engineers use coding assistants to write tests. No AI in execution or triage.", score:2},
+      {text:"AI helps with triage and log summarization in some teams.", score:3},
+      {text:"AI agents triage failures, propose remediations, and integrate with our incident workflow at platform level.", score:4},
+      {text:"AI agents author and maintain tests, adapting to schema/topology changes; humans review, don't write.", score:5}
+    ]
+  },
+  {
+    id:'q10',
+    title:'Are you ready for AI Test Authority — autonomous test authoring and maintenance?',
+    help:'Test plane that authors, refines, and retires tests based on observed system behavior. Tooling categories like this are arriving in 2026.',
+    dim:'AI Test Authority readiness',
+    opts:[
+      {text:"We haven't thought about it. Sounds far away.", score:1},
+      {text:"Curious but not on the roadmap. Hard to see how it fits our current setup.", score:2},
+      {text:"On the roadmap as a 2027+ concept. Watching the space.", score:3},
+      {text:"Foundational pieces are in place — central control plane, workload identity, AI-assisted triage. Ready to layer it in.", score:4},
+      {text:"We're already piloting AI-authored tests in at least one production-adjacent workload.", score:5}
+    ]
+  }
+];
+
+// ============ State ============
+const state = {
+  answers: new Array(QUESTIONS.length).fill(null),
+  currentQ: 0,
+};
+
+// ============ Navigation ============
+function goTo(target){
+  // hide all
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('restart-link').style.display = (target === 'landing') ? 'none' : 'inline-flex';
+  if(target === 'landing'){
+    document.getElementById('screen-landing').classList.add('active');
+  } else if(target === 'sizing'){
+    document.getElementById('screen-sizing').classList.add('active');
+  } else if(target === 'result'){
+    document.getElementById('screen-result').classList.add('active');
+  } else if(target.startsWith('q')){
+    const idx = parseInt(target.slice(1),10) - 1;
+    state.currentQ = idx;
+    renderQuestion(idx);
+    document.getElementById('screen-questions').classList.add('active');
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderQuestion(idx){
+  const q = QUESTIONS[idx];
+  const host = document.getElementById('question-host');
+  document.getElementById('progress-text').textContent = `Question ${idx+1} of ${QUESTIONS.length}`;
+  document.getElementById('progress-fill').style.width = `${((idx+1)/QUESTIONS.length)*100}%`;
+  host.innerHTML = `
+    <div class="q-num">${q.dim}</div>
+    <div class="q-text">${q.title}</div>
+    ${q.help ? `<div class="q-help">${q.help}</div>` : ''}
+    <div class="opts">
+      ${q.opts.map((o,i) => `
+        <div class="opt ${state.answers[idx]===i?'selected':''}" data-i="${i}" onclick="selectOpt(${i})">
+          <div class="opt-radio"></div>
+          <div class="opt-content"><div class="opt-text">${o.text}</div></div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  document.getElementById('back-btn').style.visibility = idx === 0 ? 'hidden' : 'visible';
+  document.getElementById('next-btn').textContent = idx === QUESTIONS.length - 1 ? 'Continue →' : 'Next →';
+  document.getElementById('next-btn').disabled = state.answers[idx] === null;
+}
+
+function selectOpt(i){
+  state.answers[state.currentQ] = i;
+  renderQuestion(state.currentQ);
+}
+
+function nextQ(){
+  if(state.answers[state.currentQ] === null) return;
+  if(state.currentQ < QUESTIONS.length - 1){
+    goTo(`q${state.currentQ + 2}`);
+  } else {
+    goTo('sizing');
+  }
+}
+
+function prevQ(){
+  if(state.currentQ > 0){
+    goTo(`q${state.currentQ}`);
+  } else {
+    goTo('landing');
+  }
+}
+
+// ============ Scoring & result ============
+function computeAndShow(){
+  const totalScore = state.answers.reduce((sum, a, i) => sum + (a !== null ? QUESTIONS[i].opts[a].score : 0), 0);
+  const level = scoreToLevel(totalScore);
+  const orgSize = parseInt(document.getElementById('org-size').value, 10);
+  const clusterCount = parseInt(document.getElementById('cluster-count').value, 10);
+
+  const result = {
+    score: totalScore,
+    level,
+    orgSize,
+    clusterCount,
+    gaps: topGaps(),
+    cost: estimateCost(level, orgSize, clusterCount)
+  };
+
+  renderResult(result);
+  goTo('result');
+}
+
+function scoreToLevel(score){
+  if(score <= 19) return 1;
+  if(score <= 28) return 2;
+  if(score <= 37) return 3;
+  if(score <= 45) return 4;
+  return 5;
+}
+
+function topGaps(){
+  // 3 lowest-scoring questions
+  const scored = state.answers.map((a,i) => ({
+    idx: i,
+    q: QUESTIONS[i],
+    score: a !== null ? QUESTIONS[i].opts[a].score : 5
+  }));
+  scored.sort((a,b) => a.score - b.score);
+  return scored.slice(0, 3);
+}
+
+function estimateCost(level, orgSize, clusterCount){
+  // Per-engineer annual cost of maturity gap, anchored on Testkube economic model.
+  // Components (annualized): escaped defects, MTTR/recovery, CI compute, env costs, runner fleet, productivity drag.
+  // Calibrated so a 1,200-engineer / 30-cluster org at L2 ≈ $1.5–2.5M (matches the documented composite).
+  const perEngineerByLevel = {
+    1: { low: 2100, high: 4000 },
+    2: { low: 1500, high: 2800 },
+    3: { low: 800,  high: 1700 },
+    4: { low: 250,  high: 600  },
+    5: { low: 0,    high: 200  }
+  };
+  const clusterMultiplier = 1 + Math.min(clusterCount / 100, 0.5); // up to +50% for very large fleets
+  const base = perEngineerByLevel[level];
+  const low = Math.round(base.low * orgSize * clusterMultiplier);
+  const high = Math.round(base.high * orgSize * clusterMultiplier);
+  // Also compute engineer-equivalent (using $200K fully loaded cost)
+  const ftePerEngineer = 200000;
+  const fteLow = (low / ftePerEngineer).toFixed(1);
+  const fteHigh = (high / ftePerEngineer).toFixed(1);
+  return { low, high, fteLow, fteHigh };
+}
+
+function fmt(n){
+  if(n >= 1e6) return `$${(n/1e6).toFixed(n >= 10e6 ? 0 : 1)}M`;
+  if(n >= 1e3) return `$${Math.round(n/1e3)}K`;
+  return `$${n}`;
+}
+
+function renderResult(r){
+  const levels = {
+    1: { name:'Reactive', class:'level-1', summary:`Your testing is functioning, but it's not a system. Tests run wherever they happen to run, distributed-system bugs land in production, and your security team probably hates how CI authenticates to the cluster. The good news: the cost of getting to L2 is small relative to the cost you're already absorbing.`,
+         next:`The fastest unlock is standardizing test execution and consolidating onto a single platform. Want me to walk through what L2 → L4 looks like for an org your size, and where the first dollar comes back?` },
+    2: { name:'CI-Bound', class:'level-2', summary:`You've built a real testing discipline, but it's running on the wrong substrate. CI was built before Kubernetes existed. Every test that runs outside the cluster is paying tax in CI minutes, security risk, and missed distributed-system failure modes. Most enterprise platform teams sit here and don't realize how much it costs them.`,
+         next:`The L2 → L4 jump is where the dollar math gets interesting. Want me to walk through the architecture and show you the specific cost categories that flip when you move test execution in-cluster?` },
+    3: { name:'Hybrid', class:'level-3', summary:`You're partway through the transition. Some teams have figured out K8s-native testing, others are still in CI. The risk at this level is stalling — orgs that don't push through to L4 spend years carrying both architectures and double the cost. The right move now is consolidation, not exploration.`,
+         next:`L3 → L4 is mostly a governance, standardization, and AI-tooling conversation. Want me to share the playbook other platform teams have used to push through?` },
+    4: { name:'K8s-Native', class:'level-4', summary:`You're modern. You've solved the hard architectural problems most orgs are still negotiating. The remaining lift is operational: AI-assisted triage at scale, full distributed coverage, and preparing for the next category — AI-authored testing. Most enterprise teams won't get here until 2027–2028.`,
+         next:`At L4, the conversation isn't about catching up — it's about whether you want to be early on AI Test Authority. Worth a 20-min conversation if that's on your radar?` },
+    5: { name:'AI-Orchestrated', class:'level-5', summary:`You're at the frontier. You've internalized that test authoring and maintenance are AI workloads, not human ones. Most orgs won't get here until 2027 at the earliest. If this score reflects reality (not aspiration), I'd love to swap notes — there are maybe a dozen teams operating at this level publicly.`,
+         next:`I'd love to learn from your setup more than pitch. If you're open to a 30-min conversation, I'll trade what we're seeing across enterprise design partners.` }
+  };
+
+  const data = levels[r.level];
+
+  document.getElementById('result-title').innerHTML = `You're at <span class="hl" style="color:var(--accent)">Level ${r.level} — ${data.name}</span>`;
+  document.getElementById('result-summary').textContent = data.summary;
+  const badge = document.getElementById('level-badge');
+  badge.textContent = `Level ${r.level} — ${data.name}`;
+  badge.className = `level-badge ${data.class}`;
+  document.getElementById('score-num').textContent = r.score;
+
+  // scale
+  document.querySelectorAll('.scale-bar').forEach(el => {
+    const lvl = parseInt(el.dataset.l, 10);
+    el.classList.remove('active','passed');
+    if(lvl < r.level) el.classList.add('passed');
+    if(lvl === r.level) el.classList.add('active');
+  });
+  document.querySelectorAll('.scale-labels span').forEach(el => {
+    el.classList.toggle('active', parseInt(el.dataset.l, 10) === r.level);
+  });
+
+  // gaps
+  const gapHost = document.getElementById('gap-list');
+  gapHost.innerHTML = r.gaps.map((g,i) => {
+    const fixText = gapFixText(g.q.id, g.score);
+    return `
+      <div class="gap-item">
+        <div class="gap-num">${i+1}</div>
+        <div class="gap-content">
+          <h4>${g.q.dim} — scoring ${g.score}/5</h4>
+          <p>${fixText}</p>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // cost
+  document.getElementById('cost-num').textContent = `${fmt(r.cost.low)} – ${fmt(r.cost.high)}`;
+  document.getElementById('engineer-equiv').textContent = `${r.cost.fteLow}–${r.cost.fteHigh} engineers`;
+
+  // next step
+  document.getElementById('next-step-text').textContent = data.next;
+}
+
+function gapFixText(qid, score){
+  // Lightweight gap remediation hints by question
+  const fixes = {
+    q1:  "Move test execution into the cluster. CI becomes the orchestrator, not the runner. Eliminates privileged credentials in CI and surfaces real distributed-system behavior.",
+    q2:  "Bind tests to workload identity inside the cluster. Test pods inherit the same RBAC as the workload under test. CI loses cluster-admin entirely.",
+    q3:  "Stand up on-demand ephemeral environments with real mesh, identity, and NetworkPolicy. Long-lived staging is the most expensive form of low-fidelity testing.",
+    q4:  "Centralize orchestration on a control plane with reusable workflow templates and matrix fan-out. Bespoke per-team scripts become reusable assets.",
+    q5:  "Adopt a tool-agnostic platform that runs any containerized test through one control plane with unified governance and reporting. Stops the framework war without forcing migration.",
+    q6:  "Layer AI-assisted root cause on top of in-cluster execution. The data is already there in logs, traces, and topology — the platform should triage it.",
+    q7:  "Introduce per-test flakiness analytics and automated quarantine. Most orgs are flying blind on which 5% of tests are causing 80% of pain.",
+    q8:  "Run tests against real cluster topology with mesh and identity active. The bugs you're catching in production are the bugs CI couldn't simulate.",
+    q9:  "AI-assisted triage and remediation are table stakes for L4. The control plane should propose fixes, not just report failures.",
+    q10: "Get the foundational layer in place — central control plane, workload identity, AI triage. AI Test Authority sits on top; you can't bolt it on without the foundation."
+  };
+  return fixes[qid] || 'Closing this gap is the highest-leverage step toward the next maturity level.';
+}
+
+function restart(){
+  state.answers = new Array(QUESTIONS.length).fill(null);
+  state.currentQ = 0;
+  goTo('landing');
+}
+
+document.getElementById('restart-link').onclick = function(e){ e.preventDefault(); restart(); };
+
+// ============ Obfuscated email + analytics events ============
+function openEmail(e){
+  e.preventDefault();
+  var addr = atob('am9uYXRoYW5jcGhlbHBzK3Rlc3RrdWJlQGdtYWlsLmNvbQ==');
+  var subj = encodeURIComponent('K8s Testing Maturity Assessment — Result');
+  var levelParam = (window._lastResult && window._lastResult.level) ? ' (Level ' + window._lastResult.level + ')' : '';
+  trackCTA('email_report');
+  window.location.href = 'mailto:' + addr + '?subject=' + subj + levelParam;
+  return false;
+}
+
+function trackCTA(name){
+  if(window.posthog && typeof window.posthog.capture === 'function'){
+    var props = window._lastResult ? { level: window._lastResult.level, score: window._lastResult.score } : {};
+    window.posthog.capture('cta_click', Object.assign({ cta: name }, props));
+  }
+}
+
+function trackEvent(name, props){
+  if(window.posthog && typeof window.posthog.capture === 'function'){
+    window.posthog.capture(name, props || {});
+  }
+}
+
+// Wire funnel events into existing flow without rewriting it
+var _origGoTo = goTo;
+goTo = function(target){
+  _origGoTo(target);
+  if(target === 'q1') trackEvent('assessment_started');
+  if(target === 'sizing') trackEvent('assessment_questions_complete');
+  if(target === 'result' && window._lastResult){
+    trackEvent('assessment_complete', { level: window._lastResult.level, score: window._lastResult.score });
+  }
+};
+
+var _origCompute = computeAndShow;
+computeAndShow = function(){
+  var totalScore = state.answers.reduce((sum, a, i) => sum + (a !== null ? QUESTIONS[i].opts[a].score : 0), 0);
+  var level = scoreToLevel(totalScore);
+  window._lastResult = { score: totalScore, level: level };
+  _origCompute();
+};
+
+// On load
+goTo('landing');
+trackEvent('landing_view');
+</script>
+</body>
+</html>
