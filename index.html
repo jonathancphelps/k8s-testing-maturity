@@ -515,6 +515,14 @@ function renderQuestion(idx){
   const host = document.getElementById('question-host');
   document.getElementById('progress-text').textContent = `Question ${idx+1} of ${QUESTIONS.length}`;
   document.getElementById('progress-fill').style.width = `${((idx+1)/QUESTIONS.length)*100}%`;
+  // Per-question instrumentation for abandonment curve (added 2026-05-16)
+  if(window.posthog && typeof window.posthog.capture === 'function'){
+    window.posthog.capture('question_viewed', {
+      question_index: idx,
+      question_id: q.id,
+      question_dim: q.dim
+    });
+  }
   host.innerHTML = `
     <div class="q-num">${q.dim}</div>
     <div class="q-text">${q.title}</div>
