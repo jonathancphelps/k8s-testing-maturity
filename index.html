@@ -180,37 +180,57 @@ h3{font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;line-height:1.
   <!-- LANDING -->
   <section class="screen active" id="screen-landing">
     <div class="eyebrow">3-Minute Diagnostic</div>
-    <h1>Where does your team sit on the <span class="hl">K8s testing maturity</span> curve?</h1>
-    <p class="lede">Most engineering orgs running Kubernetes in production don't know what level they're at, and don't know what the gap is costing them. This assessment places you on a 5-level scale built on real benchmarks from enterprise platform teams, and quantifies the annual dollar cost of the gap.</p>
+    <h1>What's your K8s testing maturity gap <span class="hl">costing you</span>?</h1>
+    <p class="lede">Most enterprise platform teams are at Level 2 of 5 — and don't realize the gap is costing them <strong style="color:var(--white)">$1M–$5M a year</strong> in incidents, CI compute, and shipped defects. This 3-minute diagnostic places you on a 5-level scale and quantifies your specific dollar exposure.</p>
 
     <div class="meta">
-      <span><span class="dot"></span>10 questions</span>
+      <span><span class="dot"></span>12 questions</span>
       <span><span class="dot"></span>~3 minutes</span>
       <span><span class="dot"></span>No email required</span>
     </div>
 
     <div class="intro-cta" style="margin-top:32px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="trackCTA('start_top');goTo('q1')">Start the assessment →</button>
-      <span style="color:var(--muted2);font-size:13px">or keep scrolling to see the 5 levels first</span>
+      <button class="btn btn-primary" onclick="trackCTA('start_top');goTo('q1')">Start the diagnostic →</button>
+      <span style="color:var(--muted2);font-size:13px">3 minutes. No email required.</span>
     </div>
 
-    <div class="levels-grid">
-      <div class="level-row"><span class="level-tag level-1">L1</span><span class="level-name">Reactive</span><span class="level-desc">Tests run wherever they happen to run. CI does everything. Failures get triaged after the page goes off.</span></div>
-      <div class="level-row"><span class="level-tag level-2">L2</span><span class="level-name">CI-Bound</span><span class="level-desc">Standardized test suites in CI. Tests still run outside the cluster with privileged credentials.</span></div>
-      <div class="level-row"><span class="level-tag level-3">L3</span><span class="level-name">Hybrid</span><span class="level-desc">Some K8s-native execution. Limited orchestration, partial governance, transition phase.</span></div>
-      <div class="level-row"><span class="level-tag level-4">L4</span><span class="level-name">K8s-Native</span><span class="level-desc">Tests execute in-cluster with workload identity. Centralized control plane, AI-assisted root cause.</span></div>
-      <div class="level-row"><span class="level-tag level-5">L5</span><span class="level-name">AI-Orchestrated <span class="future-tag">2026+</span></span><span class="level-desc">AI-authored, AI-maintained tests. Test authority adapts to schema, topology, and observed behavior autonomously.</span></div>
+    <div class="social-proof" style="margin-top:40px;padding-top:24px;border-top:1px solid var(--line)">
+      <div style="color:var(--muted2);font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-bottom:14px">Used by platform teams at</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px 22px;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.3px">
+        <span>Adobe</span>
+        <span>NVIDIA</span>
+        <span>Workday</span>
+        <span>MITRE</span>
+        <span>Northrop Grumman</span>
+        <span>Raytheon</span>
+        <span>CoreWeave</span>
+        <span>Swisscom</span>
+        <span>AlphaSense</span>
+      </div>
     </div>
 
-    <div style="margin-top:36px">
-      <button class="btn btn-primary" onclick="trackCTA('start_bottom');goTo('q1')">Start the assessment →</button>
-    </div>
+    <details style="margin-top:32px;border-top:1px solid var(--line);padding-top:24px">
+      <summary style="cursor:pointer;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:700;font-size:14px;letter-spacing:0.3px;list-style:none;display:inline-flex;align-items:center;gap:8px">
+        <span style="display:inline-block;width:14px;height:14px;border:1px solid var(--muted2);border-radius:3px;text-align:center;line-height:13px;font-size:11px">+</span>
+        Preview the 5 maturity levels (most teams find their answer is more nuanced than the labels suggest)
+      </summary>
+      <div class="levels-grid" style="margin-top:24px">
+        <div class="level-row"><span class="level-tag level-1">L1</span><span class="level-name">Reactive</span><span class="level-desc">Tests run wherever they happen to run. CI does everything. Failures get triaged after the page goes off.</span></div>
+        <div class="level-row"><span class="level-tag level-2">L2</span><span class="level-name">CI-Bound</span><span class="level-desc">Standardized test suites in CI. Tests still run outside the cluster with privileged credentials.</span></div>
+        <div class="level-row"><span class="level-tag level-3">L3</span><span class="level-name">Hybrid</span><span class="level-desc">Some K8s-native execution. Limited orchestration, partial governance, transition phase.</span></div>
+        <div class="level-row"><span class="level-tag level-4">L4</span><span class="level-name">K8s-Native</span><span class="level-desc">Tests execute in-cluster with workload identity. Centralized control plane, AI-assisted root cause.</span></div>
+        <div class="level-row"><span class="level-tag level-5">L5</span><span class="level-name">AI-Orchestrated <span class="future-tag">2026+</span></span><span class="level-desc">AI-authored, AI-maintained tests. Test authority adapts to schema, topology, and observed behavior autonomously.</span></div>
+      </div>
+      <div style="margin-top:24px">
+        <button class="btn btn-primary" onclick="trackCTA('start_bottom');goTo('q1')">Start the diagnostic →</button>
+      </div>
+    </details>
   </section>
 
   <!-- QUESTIONS (rendered dynamically) -->
   <section class="screen" id="screen-questions">
     <div class="progress">
-      <div class="progress-text" id="progress-text">Question 1 of 10</div>
+      <div class="progress-text" id="progress-text">Question 1 of 12</div>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
     </div>
     <div id="question-host"></div>
@@ -221,8 +241,8 @@ h3{font-family:'Nunito',sans-serif;font-weight:700;font-size:20px;line-height:1.
     </div>
   </section>
 
-  <!-- SIZING -->
-  <section class="screen" id="screen-sizing">
+  <!-- SIZING (DEPRECATED 2026-05-17 — sizing moved into Q11/Q12 of main flow; section kept for backward compat in case any cached JS references it) -->
+  <section class="screen" id="screen-sizing" style="display:none !important" hidden>
     <div class="eyebrow">Last step: context for the cost estimate</div>
     <h2>How many engineers are in your org?</h2>
     <p class="lede">We use this to calibrate the dollar cost of the maturity gap. Approximate is fine, it doesn't change your level, only the size of the number.</p>
@@ -481,6 +501,37 @@ const QUESTIONS = [
       {text:"Foundational pieces are in place: central control plane, workload identity, AI-assisted triage. Ready to layer it in.", score:4},
       {text:"We're already piloting AI-authored tests in at least one production-adjacent workload.", score:5}
     ]
+  },
+  {
+    id:'q11',
+    type:'meta',
+    defaultIdx:2,
+    title:'How big is your engineering org?',
+    help:'Approximate is fine. We use this to size your dollar exposure, it doesn\'t change your level.',
+    dim:'Organization size',
+    opts:[
+      {text:"Under 100 engineers", value:50},
+      {text:"100–500 engineers", value:300},
+      {text:"500–1,000 engineers", value:800},
+      {text:"1,000–2,500 engineers", value:1500},
+      {text:"2,500–5,000 engineers", value:4000},
+      {text:"5,000+ engineers", value:8000}
+    ]
+  },
+  {
+    id:'q12',
+    type:'meta',
+    defaultIdx:2,
+    title:'How many production Kubernetes clusters do you run?',
+    help:'Approximate is fine. Bigger fleets see bigger absolute cost gaps.',
+    dim:'Cluster footprint',
+    opts:[
+      {text:"1–5 clusters", value:3},
+      {text:"5–15 clusters", value:10},
+      {text:"15–35 clusters", value:25},
+      {text:"35–80 clusters", value:60},
+      {text:"80+ clusters", value:120}
+    ]
   }
 ];
 
@@ -512,8 +563,12 @@ function goTo(target){
 
 function renderQuestion(idx){
   const q = QUESTIONS[idx];
+  // For meta (sizing) questions, pre-select the default if not yet answered
+  if(q.type === 'meta' && state.answers[idx] === null && typeof q.defaultIdx === 'number'){
+    state.answers[idx] = q.defaultIdx;
+  }
   const host = document.getElementById('question-host');
-  document.getElementById('progress-text').textContent = `Question ${idx+1} of ${QUESTIONS.length}`;
+  document.getElementById('progress-text').textContent = `Question ${idx+1} of ${QUESTIONS.length}${q.type==='meta' ? ' (sizing)' : ''}`;
   document.getElementById('progress-fill').style.width = `${((idx+1)/QUESTIONS.length)*100}%`;
   // Per-question instrumentation for abandonment curve (added 2026-05-16)
   if(window.posthog && typeof window.posthog.capture === 'function'){
@@ -537,7 +592,9 @@ function renderQuestion(idx){
     </div>
   `;
   document.getElementById('back-btn').style.visibility = idx === 0 ? 'hidden' : 'visible';
-  document.getElementById('next-btn').textContent = idx === QUESTIONS.length - 1 ? 'Continue →' : 'Next →';
+  // Last question CTA reveals the payoff explicitly
+  const isLast = idx === QUESTIONS.length - 1;
+  document.getElementById('next-btn').textContent = isLast ? 'Reveal my level + cost →' : 'Next →';
   document.getElementById('next-btn').disabled = state.answers[idx] === null;
 }
 
@@ -551,7 +608,7 @@ function nextQ(){
   if(state.currentQ < QUESTIONS.length - 1){
     goTo(`q${state.currentQ + 2}`);
   } else {
-    goTo('sizing');
+    computeAndShow();
   }
 }
 
@@ -565,10 +622,18 @@ function prevQ(){
 
 // ============ Scoring & result ============
 function computeAndShow(){
-  const totalScore = state.answers.reduce((sum, a, i) => sum + (a !== null ? QUESTIONS[i].opts[a].score : 0), 0);
+  // Only maturity questions (non-meta) contribute to the score
+  const totalScore = state.answers.reduce((sum, a, i) => {
+    if(QUESTIONS[i].type === 'meta') return sum;
+    return sum + (a !== null ? QUESTIONS[i].opts[a].score : 0);
+  }, 0);
   const level = scoreToLevel(totalScore);
-  const orgSize = parseInt(document.getElementById('org-size').value, 10);
-  const clusterCount = parseInt(document.getElementById('cluster-count').value, 10);
+
+  // Read sizing from the meta questions (q11 = org size, q12 = clusters)
+  const q11Idx = QUESTIONS.findIndex(q => q.id === 'q11');
+  const q12Idx = QUESTIONS.findIndex(q => q.id === 'q12');
+  const orgSize = QUESTIONS[q11Idx].opts[state.answers[q11Idx] ?? QUESTIONS[q11Idx].defaultIdx].value;
+  const clusterCount = QUESTIONS[q12Idx].opts[state.answers[q12Idx] ?? QUESTIONS[q12Idx].defaultIdx].value;
 
   const result = {
     score: totalScore,
@@ -592,12 +657,12 @@ function scoreToLevel(score){
 }
 
 function topGaps(){
-  // 3 lowest-scoring questions
+  // 3 lowest-scoring maturity questions (exclude meta/sizing questions)
   const scored = state.answers.map((a,i) => ({
     idx: i,
     q: QUESTIONS[i],
     score: a !== null ? QUESTIONS[i].opts[a].score : 5
-  }));
+  })).filter(item => item.q.type !== 'meta');
   scored.sort((a,b) => a.score - b.score);
   return scored.slice(0, 3);
 }
@@ -741,7 +806,8 @@ var _origGoTo = goTo;
 goTo = function(target){
   _origGoTo(target);
   if(target === 'q1') trackEvent('assessment_started');
-  if(target === 'sizing') trackEvent('assessment_questions_complete');
+  // Fire questions_complete when transitioning from maturity Qs (q1-q10) into sizing meta Qs (q11)
+  if(target === 'q11') trackEvent('assessment_questions_complete');
   if(target === 'result' && window._lastResult){
     trackEvent('assessment_complete', { level: window._lastResult.level, score: window._lastResult.score });
   }
@@ -749,7 +815,11 @@ goTo = function(target){
 
 var _origCompute = computeAndShow;
 computeAndShow = function(){
-  var totalScore = state.answers.reduce((sum, a, i) => sum + (a !== null ? QUESTIONS[i].opts[a].score : 0), 0);
+  // Only sum scores from maturity questions; meta (sizing) questions have no `score` field
+  var totalScore = state.answers.reduce(function(sum, a, i){
+    if(QUESTIONS[i].type === 'meta') return sum;
+    return sum + (a !== null ? QUESTIONS[i].opts[a].score : 0);
+  }, 0);
   var level = scoreToLevel(totalScore);
   window._lastResult = { score: totalScore, level: level };
   _origCompute();
@@ -798,6 +868,25 @@ renderResult = function(r){
   _origRenderResult(r);
   renderCTAByLevel(r.level, r.score);
 };
+
+// UTM passthrough: append visitor's UTMs to all cal.com / hubspot booking links
+// so Jon can attribute meetings to specific source posts in Cal.com analytics (2026-05-17).
+document.addEventListener('DOMContentLoaded', function(){
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var utmKeys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+    var passthrough = utmKeys.filter(function(k){ return params.has(k); })
+                              .map(function(k){ return k + '=' + encodeURIComponent(params.get(k)); })
+                              .join('&');
+    if(passthrough){
+      var links = document.querySelectorAll('a[href*="cal.com"], a[href*="meetings.hubspot.com"]');
+      links.forEach(function(a){
+        var separator = a.href.indexOf('?') >= 0 ? '&' : '?';
+        a.href = a.href + separator + passthrough;
+      });
+    }
+  } catch(e){ /* don't break the page on UTM parse errors */ }
+});
 
 // Form submit handler
 document.addEventListener('DOMContentLoaded', function(){
